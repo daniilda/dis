@@ -24,7 +24,9 @@ export async function showModal<TModal extends ModalFC<any, any>>(
         component: modal,
         closed: false,
         callback: (r) => {
-          $modals.remove(modalRequest as never);
+          setTimeout(() => {
+            $modals.remove(modalRequest as never);
+          }, 300);
           resolve(r);
         },
         props: props[0] as UnwrapModalProps<TModal>,

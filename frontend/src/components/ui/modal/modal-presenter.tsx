@@ -11,7 +11,7 @@ const Modal: FC<ModalRequest> = observer((x) => {
   const onClose = useCallback(
     (data: Defined | undefined) => {
       setClosed(true);
-      setTimeout(() => x.callback(data), 200);
+      x.callback(data);
     },
     [x],
   );
@@ -22,7 +22,7 @@ const Modal: FC<ModalRequest> = observer((x) => {
         open={!closed}
         onOpenChange={(v) => !modalBusy && !v && onClose(undefined)}
       >
-        <DialogContent disableClose={modalBusy}>
+        <DialogContent className="w-fit min-w-96" disableClose={modalBusy}>
           <x.component {...x.props} done={onClose} />
         </DialogContent>
       </Dialog>

@@ -36,7 +36,7 @@ export const ConfirmationModal: ModalFC<
           <DialogDescription>{x.description}</DialogDescription>
         )}
       </DialogHeader>
-      <DialogFooter>
+      <DialogFooter className="flex flex-col sm:flex-row justify-end gap-y-2 flex-wrap w-full">
         <Button
           variant="outline"
           onClick={() => x.done(false)}

@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
-import { AuthService } from "@/stores/auth.service";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NotFoundLayout } from "@/components/layouts/not-found.layout";
+import { FullWindowFileUpload } from "@/components/full-screen-file-upload";
 
 const ModalPresenter = React.lazy(() =>
   import("@/components/ui/modal/modal-presenter").then((m) => ({
@@ -13,6 +13,7 @@ const ModalPresenter = React.lazy(() =>
 const Page = React.memo(() => {
   return (
     <TooltipProvider>
+      <FullWindowFileUpload />
       <Outlet />
       <React.Suspense>
         <ModalPresenter />
@@ -23,6 +24,5 @@ const Page = React.memo(() => {
 
 export const Route = createRootRoute({
   component: Page,
-  beforeLoad: () => AuthService.waitInit(),
   notFoundComponent: NotFoundLayout,
 });

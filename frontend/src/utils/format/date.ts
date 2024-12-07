@@ -33,7 +33,7 @@ export const formatDistanceToNow = (
     return `${hours} ${short ? "h" : pluralize(hours, ["час", "часа", "часов"])} назад`;
   }
   if (minutes > 0) {
-    return `${minutes} ${short ? "min" : pluralize(minutes, ["минута", "минуты"])} назад`;
+    return `${minutes} ${short ? "min" : pluralize(minutes, ["минута", "минуты", "минут"])} назад`;
   }
   if (seconds > 30) {
     return `около минуты назад`;

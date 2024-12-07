@@ -1,6 +1,5 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AbortError } from "./errors/api-error";
-import useDeepCompareEffect from "use-deep-compare-effect";
 
 export const debounce = <F extends (...args: any[]) => any>(
   func: F,
@@ -104,7 +103,7 @@ export const useDebounceAsync = <Args extends any[], Return>(
 
   const reload = useCallback(() => load(options.args), [load, options.args]);
 
-  useDeepCompareEffect(() => load(options.args), [...options.args]);
+  useEffect(() => load(options.args), [...options.args]);
 
   return [data, { isLoading: loading, error, reload }] as const;
 };
