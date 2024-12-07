@@ -5,12 +5,7 @@ import { observer } from "mobx-react-lite";
 import { createPortal } from "react-dom";
 import { supportedFileTypes, vm } from "@/stores/store";
 
-interface FileWithPreview extends File {
-  preview: string;
-}
-
 export const FullWindowFileUpload = observer(() => {
-  const [files, setFiles] = useState<FileWithPreview[]>([]);
   const [isDraggingOverWindow, setIsDraggingOverWindow] = useState(false);
 
   useEffect(() => {
@@ -49,7 +44,7 @@ export const FullWindowFileUpload = observer(() => {
 
   return createPortal(
     <>
-      {(isDraggingOverWindow || files.length > 0) && (
+      {isDraggingOverWindow && (
         <div className="fixed appear inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center p-4 z-50">
           <div
             {...getRootProps()}
@@ -64,7 +59,7 @@ export const FullWindowFileUpload = observer(() => {
             <p className="text-lg text-center mb-2">
               {isDragActive
                 ? "А теперь отпустите :)"
-                : "Перетащите файлы сюда..."}
+                : "Перетащите картинки, документы или архивы сюда..."}
             </p>
             <p className="text-sm text-muted-foreground">
               Поддерживаются .txt, .pdf, .docx, .doc

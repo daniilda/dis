@@ -41,7 +41,7 @@ export const ChatList = observer(({ messages, isMobile }: ChatListProps) => {
         </div>
       )}
       {messages.length > 0 && (
-        <div className="px-4 flex-1 flex-col flex overflow-hidden">
+        <div className="sm:px-4 flex-1 flex-col flex overflow-hidden">
           <ChatMessageList ref={messagesContainerRef}>
             <AnimatePresence>
               {messages.map((message, index) => {
@@ -66,7 +66,7 @@ export const ChatList = observer(({ messages, isMobile }: ChatListProps) => {
                   >
                     {/* Usage of ChatBubble component */}
                     <ChatBubble variant={variant}>
-                      <ChatBubbleAvatar>
+                      <ChatBubbleAvatar className="hidden sm:flex">
                         {message.isBot ? <BotIcon /> : <User2Icon />}
                       </ChatBubbleAvatar>
                       <ChatBubbleMessage isLoading={message.isLoading}>

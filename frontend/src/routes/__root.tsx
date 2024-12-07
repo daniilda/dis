@@ -3,6 +3,7 @@ import { Outlet, createRootRoute } from "@tanstack/react-router";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NotFoundLayout } from "@/components/layouts/not-found.layout";
 import { FullWindowFileUpload } from "@/components/full-screen-file-upload";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const ModalPresenter = React.lazy(() =>
   import("@/components/ui/modal/modal-presenter").then((m) => ({
@@ -12,13 +13,15 @@ const ModalPresenter = React.lazy(() =>
 
 const Page = React.memo(() => {
   return (
-    <TooltipProvider>
-      <FullWindowFileUpload />
-      <Outlet />
-      <React.Suspense>
-        <ModalPresenter />
-      </React.Suspense>
-    </TooltipProvider>
+    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+      <TooltipProvider>
+        <FullWindowFileUpload />
+        <Outlet />
+        <React.Suspense>
+          <ModalPresenter />
+        </React.Suspense>
+      </TooltipProvider>
+    </ThemeProvider>
   );
 });
 

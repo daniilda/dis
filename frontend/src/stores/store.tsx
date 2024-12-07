@@ -5,10 +5,29 @@ import { makeAutoObservable } from "mobx";
 import { toast } from "sonner";
 
 export const supportedFileTypes = [
+  //pdf
   "application/pdf",
+  //doc
   "application/msword",
+  //docx
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  //txt
   "text/plain",
+  //zip
+  "application/zip",
+  //jpg
+  "image/jpeg",
+  //png
+  "image/png",
+] as const;
+
+export const supportedFileExtensions: {
+  label: string;
+  value: string[];
+}[] = [
+  { label: "Документы", value: ["pdf", "doc", "docx", "txt"] },
+  { label: "Архивы", value: ["zip"] },
+  { label: "Изображения", value: ["jpg", "png"] },
 ] as const;
 
 export const vm = new (class {
@@ -23,6 +42,7 @@ export const vm = new (class {
           isLoading: false,
           timestamp: new Date().toISOString(),
           isBot: false,
+          images: [],
         },
         {
           id: 1,
@@ -30,9 +50,10 @@ export const vm = new (class {
           isLoading: false,
           timestamp: new Date().toISOString(),
           isBot: true,
+          images: [],
         },
       ],
-      name: "John Doe",
+      name: "John Anticheat",
     },
     {
       id: 1,
@@ -43,6 +64,7 @@ export const vm = new (class {
           isLoading: false,
           timestamp: new Date().toISOString(),
           isBot: false,
+          images: [],
         },
         {
           id: 1,
@@ -50,6 +72,7 @@ export const vm = new (class {
           isLoading: false,
           timestamp: new Date().toISOString(),
           isBot: true,
+          images: [],
         },
       ],
       name: "John Doe",
@@ -65,13 +88,7 @@ export const vm = new (class {
         await new Promise((resolve) => setTimeout(resolve, 1000));
       },
       title: "Удалить файлы",
-      description: (
-        <>
-          Вы уверены, что хотите
-          <br />
-          удалить выбранные файлы?
-        </>
-      ),
+      description: "Вы уверены, что хотите удалить выбранные файлы?",
       destructive: true,
       buttonText: "Удалить",
     });

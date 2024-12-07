@@ -36,7 +36,7 @@ export const Sidebar = observer(({ isCollapsed, isMobile }: SidebarProps) => {
       );
     },
     [vm.chats, search],
-    500,
+    250,
   );
 
   return (
@@ -72,7 +72,6 @@ export const Sidebar = observer(({ isCollapsed, isMobile }: SidebarProps) => {
               <p className="font-medium">Чаты</p>
               <span className="text-zinc-300">({vm.chats.length})</span>
             </div>
-
             <div>
               <button
                 onClick={() => vm.setSelectedChat(null)}
@@ -85,7 +84,7 @@ export const Sidebar = observer(({ isCollapsed, isMobile }: SidebarProps) => {
               </button>
             </div>
           </div>
-          <div className="flex px-2 w-full">
+          <div className="flex px-2 w-full pt-3">
             <IconInput
               placeholder="Поиск"
               containerClassName="w-full"

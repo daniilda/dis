@@ -72,7 +72,7 @@ export const ChatLayout = observer(
         >
           <Sidebar isCollapsed={isCollapsed || isMobile} isMobile={isMobile} />
         </ResizablePanel>
-        <ResizableHandle withHandle />
+        <ResizableHandle withHandle={!isMobile} />
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
           <Chat isMobile={isMobile} />
         </ResizablePanel>

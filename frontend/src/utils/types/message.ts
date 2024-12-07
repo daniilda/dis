@@ -3,7 +3,8 @@ export interface Message {
   message?: string;
   isLoading?: boolean;
   timestamp: string;
-  isBot?: boolean;
+  isBot: boolean;
+  images: string[];
 }
 
 export interface Chat {
