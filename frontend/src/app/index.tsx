@@ -4,7 +4,6 @@ import "./globals.css";
 import { configure } from "mobx";
 import "@fontsource-variable/inter";
 import { registerSW } from "virtual:pwa-register";
-import { Toaster } from "sonner";
 import { applyZodRussianLanguage } from "@/utils/locale/zod-russian";
 
 registerSW({
@@ -27,7 +26,6 @@ configure({
 
 // Import the generated route tree
 import { routeTree } from "../routeTree.gen";
-import { createPortal } from "react-dom";
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -45,15 +43,6 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <>
-      {createPortal(
-        <Toaster
-          richColors
-          theme="light"
-          position="bottom-left"
-          className="z-[9999]"
-        />,
-        document.body,
-      )}
       <RouterProvider router={router} />
     </>,
   );
