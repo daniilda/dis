@@ -25,7 +25,9 @@ export namespace SessionEndpoint {
       );
 
   export const deleteChat = (sessionId: string, chatId: string) =>
-    api(`/sessions/${sessionId}/chats/${chatId}`).delete.expectSchema(z.void());
+    api(`/sessions/${sessionId}/chats/${chatId}`).delete.expect(
+      (v) => v.status,
+    );
 
   export const getChat = (sessionId: string, chatId: string) =>
     api(`/sessions/${sessionId}/chats/${chatId}`).get.expectSchema(

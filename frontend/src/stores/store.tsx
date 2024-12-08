@@ -136,12 +136,14 @@ export const vm = new (class {
 
     const ok = await showModal(ConfirmationModal, {
       action: async () => {
-        await SessionEndpoint.deleteChat(
-          this.sessionId,
-          this.selectedChat!.id,
-        ).run();
-
-        return true;
+        try {
+          await SessionEndpoint.deleteChat(
+            this.sessionId,
+            this.selectedChat!.id,
+          ).run();
+        } catch (e) {
+          console.error(e);
+        }
       },
       title: "Удалить чат",
       description: "Вы уверены, что хотите удалить чат?",
