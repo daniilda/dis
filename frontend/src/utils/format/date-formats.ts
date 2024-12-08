@@ -1,0 +1,36 @@
+export const dateFormats = {
+  MMMM: { month: "long", hour12: false },
+  YYYY: { year: "numeric", hour12: false },
+  ddMMM: { day: "2-digit", month: "short", hour12: false },
+  ddMM: { day: "2-digit", month: "2-digit", hour12: false },
+  ddMMyyyy: {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour12: false,
+  },
+  ddMMyyyyHHmm: {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  },
+  ddMMyyyyHHmmss: {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  },
+  MMMddHHmm: {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  },
+} satisfies Record<string, Intl.DateTimeFormatOptions>;
