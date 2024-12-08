@@ -4,7 +4,7 @@ import { authToken } from "./auth-token";
 import { handleError } from "./api-error-handler";
 import { UnexpectedResponseError } from "@/utils/errors/api-error";
 
-const baseUrl = "https://dev.main.firsty.ai/api";
+export const baseUrl = "http://90.156.159.65:6002/api/v1";
 
 type Schema = z.ZodType<any, any, any>;
 
@@ -18,7 +18,7 @@ export interface RequestTemplateData<R> {
   readonly headers: HeadersInit;
   readonly schema: Schema | null;
 
-  readonly responseReader: (r: Response) => Promise<R>;
+  readonly responseReader: (r: Response) => Promise<R> | R;
 }
 
 export class RequestTemplate<R> {
@@ -105,7 +105,9 @@ export class RequestTemplateBuilder {
     });
   }
 
-  expect<R>(responseReader: (r: Response) => Promise<R>): RequestTemplate<R> {
+  expect<R>(
+    responseReader: (r: Response) => Promise<R> | R,
+  ): RequestTemplate<R> {
     return new RequestTemplate({
       body: null,
       headers: this.headers,

@@ -200,9 +200,12 @@ export const DatabaseDrawer: FC<{
               multiple
               accept={supportedFileTypes.join(",")}
               className="sr-only"
-              onChange={(e) =>
-                e.target.files && vm.uploadFiles(Array.from(e.target.files))
-              }
+              onChange={(e) => {
+                console.log({ e });
+                if (e.target.files) {
+                  vm.uploadFiles(Array.from(e.target.files));
+                }
+              }}
             />
             <Upload />
             <span>Загрузить файлы</span>

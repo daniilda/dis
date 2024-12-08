@@ -23,6 +23,7 @@ export const ConfirmationModal: ModalFC<
 > = observer((x) => {
   const [action, { isLoading }] = useAction(async () => {
     await x.action();
+    console.log("done");
     return x.done(true);
   });
 

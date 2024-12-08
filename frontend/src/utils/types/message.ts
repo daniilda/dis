@@ -1,20 +1,23 @@
+import { DocumentModel } from "@/api/models/document.model";
+
 export interface Message {
   id: number;
-  message?: string;
+  message: string;
   isLoading?: boolean;
+  document: DocumentModel.Item | null;
   timestamp: string;
   isBot: boolean;
-  images: string[];
+  image: string | null;
 }
 
 export interface Chat {
-  id: number;
+  id: string;
   name: string;
   messages: Message[];
 }
 
 export interface DatabaseFile {
-  id: number;
+  id: string;
   name: string;
   uploadDate: string;
   selected: boolean;

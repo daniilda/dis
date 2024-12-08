@@ -35,7 +35,7 @@ export const Sidebar = observer(({ isCollapsed, isMobile }: SidebarProps) => {
         ),
       );
     },
-    [vm.chats, search],
+    [vm.chats.length, search],
     250,
   );
 
@@ -45,12 +45,12 @@ export const Sidebar = observer(({ isCollapsed, isMobile }: SidebarProps) => {
       className="relative group flex flex-col h-full overflow-hidden bg-muted/10 dark:bg-muted/20 gap-4 p-2 data-[collapsed=true]:p-2 "
     >
       {isCollapsed ? (
-        <div className="flex items-center justify-center w-full">
+        <div className="flex items-center justify-center w-full mt-1.5 md:mt-0">
           <TooltipProvider>
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <button
-                  onClick={() => vm.setSelectedChat(null)}
+                  onClick={() => vm.createChat()}
                   className={cn(
                     buttonVariants({ variant: "ghost", size: "icon" }),
                     "h-11 w-11 md:h-16 md:w-16 mx-auto rounded-xl",
@@ -74,7 +74,7 @@ export const Sidebar = observer(({ isCollapsed, isMobile }: SidebarProps) => {
             </div>
             <div>
               <button
-                onClick={() => vm.setSelectedChat(null)}
+                onClick={() => vm.createChat()}
                 className={cn(
                   buttonVariants({ variant: "ghost", size: "icon" }),
                   "h-9 w-9",
@@ -176,7 +176,7 @@ export const Sidebar = observer(({ isCollapsed, isMobile }: SidebarProps) => {
           )}
           {chats.length === 0 && (
             <div className="flex justify-center items-center h-full pt-4">
-              <p className="text-muted-foreground">Нет чатов</p>
+              <p className="text-muted-foreground text-center">Нет чатов</p>
             </div>
           )}
         </nav>

@@ -32,8 +32,9 @@ export const ChatBottombar = observer(({ isMobile }: ChatBottombarProps) => {
         isBot: false,
         timestamp: new Date().toISOString(),
         isLoading: false,
-
+        image: null,
         message: message.trim(),
+        document: null,
       };
       sendMessage(newMessage);
       setMessage("");

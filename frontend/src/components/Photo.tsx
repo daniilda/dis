@@ -8,12 +8,7 @@ export const Photo: FC<{
 }> = ({ sources }) => {
   return (
     <Gallery>
-      <Item
-        original={sources[0]}
-        thumbnail={sources[0]}
-        width={100}
-        height={100}
-      >
+      <Item original={sources[0]} thumbnail={sources[0]} height={600}>
         {({ ref, open }) => (
           <img onClick={open} ref={ref} src={sources[0]} alt="" />
         )}

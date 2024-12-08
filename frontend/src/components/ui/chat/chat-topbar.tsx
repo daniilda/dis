@@ -1,4 +1,4 @@
-import { BotIcon, Moon, Sun } from "lucide-react";
+import { BotIcon, Trash2 } from "lucide-react";
 import { ExpandableChatHeader } from "./expandable-chat";
 import { ChatBubbleAvatar } from "./chat-bubble";
 import { observer } from "mobx-react-lite";
@@ -6,9 +6,8 @@ import { vm } from "@/stores/store";
 import { formatDistanceToNow } from "@/utils/format/date";
 import Logo from "@/assets/logo.svg?react";
 import { FC, useEffect, useState } from "react";
-import { useTheme } from "@/components/theme-provider";
-import { Button } from "../button";
 import { ChangeTheme } from "../change-theme";
+import { Button } from "../button";
 
 // export const TopbarIcons = [{ icon: Phone }, { icon: Video }, { icon: Info }];
 
@@ -37,7 +36,7 @@ export default observer(function ChatTopbar() {
           </ChatBubbleAvatar>
           <div className="flex flex-col">
             <span className="font-medium">{selectedChat.name}</span>
-            {selectedChat && (
+            {selectedChat.messages.length > 0 && (
               <span className="text-xs">
                 Последнее сообщение:{" "}
                 <Time
@@ -55,6 +54,15 @@ export default observer(function ChatTopbar() {
       )}
 
       <div className="flex gap-1">
+        {selectedChat && (
+          <Button
+            variant="ghost-destructive"
+            size="icon"
+            onClick={() => vm.deleteChat()}
+          >
+            <Trash2 />
+          </Button>
+        )}
         <ChangeTheme />
         {/* <button
           className={cn(

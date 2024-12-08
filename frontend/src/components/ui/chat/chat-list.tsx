@@ -15,6 +15,9 @@ import { Message } from "@/utils/types/message";
 import { observer } from "mobx-react-lite";
 import { formatDate } from "@/utils/format/date";
 import { cn } from "@/utils/cn";
+import { Photo } from "@/components/Photo";
+import { toast } from "sonner";
+import { downloadFile } from "@/utils/download";
 
 interface ChatListProps {
   messages: Message[];
@@ -71,16 +74,17 @@ export const ChatList = observer(({ messages, isMobile }: ChatListProps) => {
                       </ChatBubbleAvatar>
                       <ChatBubbleMessage isLoading={message.isLoading}>
                         {message.message}
+                        {message.image && <Photo sources={[message.image]} />}
                         {message.timestamp && (
                           <ChatBubbleTimestamp
                             timestamp={formatDate(
                               message.timestamp,
-                              "MMMddHHmm",
+                              "ddMMyyyyHHmmss",
                             )}
                           />
                         )}
                       </ChatBubbleMessage>
-                      {message.isBot && (
+                      {message.isBot && message.document && (
                         <ChatBubbleActionWrapper>
                           {actionIcons.map(({ icon: Icon, type }) => (
                             <ChatBubbleAction
@@ -88,11 +92,16 @@ export const ChatList = observer(({ messages, isMobile }: ChatListProps) => {
                               key={type}
                               icon={<Icon className="size-4" />}
                               onClick={() => {
-                                console.log(
-                                  "Action " +
-                                    type +
-                                    " clicked for message " +
-                                    index,
+                                if (!message.document) return;
+                                toast.promise(
+                                  downloadFile(
+                                    message.document.id,
+                                    message.document.name,
+                                  ),
+                                  {
+                                    success: "Файл успешно скачан",
+                                    error: "Ошибка при скачивании файла",
+                                  },
                                 );
                               }}
                             />

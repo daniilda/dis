@@ -17,7 +17,7 @@ export class UnexpectedResponseError extends ApiError {
       expected,
       garbage,
     });
-    super("Unexpected response came from server");
+    super("Сервер вернул ответ в неизвестном формате");
   }
 }
 

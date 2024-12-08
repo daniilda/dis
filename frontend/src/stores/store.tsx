@@ -1,14 +1,16 @@
+import { DocumentsEndpoint } from "@/api/endpoints/documents.endpoint";
+import { SessionEndpoint } from "@/api/endpoints/session.endpoint";
+import { DocumentModel } from "@/api/models/document.model";
 import { ConfirmationModal } from "@/components/modals/confirmation.modal";
+import { CreateChatModal } from "@/components/modals/create-chat.modal";
 import { showModal } from "@/components/ui/modal/show";
 import { Chat, DatabaseFile, Message } from "@/utils/types/message";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, observable } from "mobx";
 import { toast } from "sonner";
 
 export const supportedFileTypes = [
   //pdf
   "application/pdf",
-  //doc
-  "application/msword",
   //docx
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   //txt
@@ -25,59 +27,15 @@ export const supportedFileExtensions: {
   label: string;
   value: string[];
 }[] = [
-  { label: "Документы", value: ["pdf", "doc", "docx", "txt"] },
-  { label: "Архивы", value: ["zip"] },
+  { label: "PDF", value: ["pdf"] },
+  { label: "DOCX", value: ["docx"] },
+  { label: "TXT", value: ["txt"] },
   { label: "Изображения", value: ["jpg", "png"] },
 ] as const;
 
 export const vm = new (class {
   isLoading = false;
-  chats: Chat[] = [
-    {
-      id: 0,
-      messages: [
-        {
-          id: 0,
-          message: "Hello, how are you?",
-          isLoading: false,
-          timestamp: new Date().toISOString(),
-          isBot: false,
-          images: [],
-        },
-        {
-          id: 1,
-          message: "I'm fine, thank you!",
-          isLoading: false,
-          timestamp: new Date().toISOString(),
-          isBot: true,
-          images: [],
-        },
-      ],
-      name: "John Anticheat",
-    },
-    {
-      id: 1,
-      messages: [
-        {
-          id: 0,
-          message: "I'm fine, thank you!",
-          isLoading: false,
-          timestamp: new Date().toISOString(),
-          isBot: false,
-          images: [],
-        },
-        {
-          id: 1,
-          message: "Hello, how are you?",
-          isLoading: false,
-          timestamp: new Date().toISOString(),
-          isBot: true,
-          images: [],
-        },
-      ],
-      name: "John Doe",
-    },
-  ];
+  chats: Chat[] = [];
   selectedChat: Chat | null = null;
   get selectedFiles() {
     return this.database.filter((file) => file.selected);
@@ -85,7 +43,9 @@ export const vm = new (class {
   async deleteFiles() {
     const deleted = await showModal(ConfirmationModal, {
       action: async () => {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        for (const file of this.selectedFiles) {
+          await DocumentsEndpoint.remove(file.id).run();
+        }
       },
       title: "Удалить файлы",
       description: "Вы уверены, что хотите удалить выбранные файлы?",
@@ -96,71 +56,164 @@ export const vm = new (class {
       this.database = this.database.filter((file) => !file.selected);
     }
   }
-  database: DatabaseFile[] = [
-    {
-      id: 0,
-      name: "filefilefilefilefilefilefilefilefilefile.pdf",
-      uploadDate: new Date().toISOString(),
-      selected: false,
-      isUploading: false,
-    },
-    {
-      id: 1,
-      name: "file2.pdf",
-      uploadDate: new Date().toISOString(),
-      selected: false,
-      isUploading: false,
-    },
-    {
-      id: 2,
-      name: "file3.pdf",
-      uploadDate: new Date().toISOString(),
-      selected: false,
-      isUploading: true,
-    },
-  ];
+  database: DatabaseFile[] = [];
 
-  setSelectedChat(chat: Chat | null) {
+  async createChat(): Promise<Chat | null> {
+    const res = await showModal(CreateChatModal, {});
+    if (!res) return null;
+
+    const chat = await SessionEndpoint.createChat(
+      this.sessionId,
+      res.name,
+    ).run();
+
+    this.selectedChat = {
+      id: chat.chatId,
+      messages: [],
+      name: chat.name,
+    };
+    this.chats.push(this.selectedChat);
+
+    return this.selectedChat;
+  }
+
+  async setSelectedChat(chat: Chat | null) {
     this.selectedChat = chat;
+
+    if (!this.selectedChat) return;
+
+    const res = await SessionEndpoint.getChat(
+      this.sessionId,
+      this.selectedChat.id,
+    ).run();
+
+    this.selectedChat.messages = res.messages.map((v, i) => ({
+      id: i,
+      message: v.text,
+      isLoading: false,
+      timestamp: v.createdAt,
+      document: v.document,
+      isBot: v.isBot,
+      image: v.pictureFileId,
+    }));
   }
 
   async sendMessage(message: Message) {
     if (!this.selectedChat) {
-      this.selectedChat = {
-        id: this.chats.length,
-        messages: [],
-        name: "Новый чат",
-      };
-      this.chats.push(this.selectedChat);
+      await this.createChat();
     }
+
+    if (!this.selectedChat) return;
 
     this.isLoading = true;
 
     this.selectedChat.messages.push(message);
-    // TODO: send message to backend
+    const botMessage: Message = observable({
+      id: this.selectedChat.messages.length,
+      timestamp: new Date().toISOString(),
+      isBot: true,
+      image: null,
+      message: "",
+      document: null,
+      isLoading: true,
+    } satisfies Message);
+    this.selectedChat.messages.push(botMessage);
+
+    const res = await SessionEndpoint.sendMessage(
+      this.sessionId,
+      this.selectedChat.id,
+      message.message,
+    ).run();
+
+    botMessage.message = res.message.text;
+    botMessage.image = res.message.pictureFileId;
+    botMessage.isLoading = false;
     this.isLoading = false;
   }
 
+  async deleteChat() {
+    if (!this.selectedChat) return;
+
+    const ok = await showModal(ConfirmationModal, {
+      action: async () => {
+        await SessionEndpoint.deleteChat(
+          this.sessionId,
+          this.selectedChat!.id,
+        ).run();
+
+        return true;
+      },
+      title: "Удалить чат",
+      description: "Вы уверены, что хотите удалить чат?",
+      destructive: true,
+      buttonText: "Удалить",
+    });
+    if (ok) {
+      this.chats = this.chats.filter((v) => v.id !== this.selectedChat!.id);
+      this.selectedChat = null;
+    }
+  }
+
+  async fetchDocuments() {
+    const res = await DocumentsEndpoint.list.run();
+    this.database = res.documents.map((v) => ({
+      id: v.id.toString(),
+      isUploading: v.state === DocumentModel.DocumentState.Created,
+      name: v.name,
+      uploadDate: v.createdAt,
+      selected: false,
+    }));
+
+    if (this.database.some((v) => v.isUploading)) {
+      setTimeout(() => this.fetchDocuments(), 5000);
+    }
+  }
+
   async uploadFiles(files: File[]) {
-    // TODO: send files to backend
     const action = async () => {
       if (files.length === 0) {
         throw new Error("Выберите файлы для загрузки");
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await DocumentsEndpoint.create(files).then((v) => {
+        console.log(v);
+      });
 
-      console.log(files);
+      this.fetchDocuments();
+
+      return true;
     };
 
     toast.promise(action(), {
       loading: "Загружаем файлы...",
       success: "Файлы загружены!",
-      error: "Выбраны неверные файлы",
+      error: (v) => {
+        console.log(v);
+        return "Выбраны неверные файлы";
+      },
     });
   }
 
   constructor() {
     makeAutoObservable(this);
+    void this.init();
+  }
+
+  sessionId: string = localStorage.getItem("sessionId") ?? "";
+  async init() {
+    if (!this.sessionId) {
+      const session = await SessionEndpoint.createSession.run();
+      this.sessionId = session;
+      localStorage.setItem("sessionId", session);
+    }
+
+    this.fetchDocuments();
+    const chats = await SessionEndpoint.getChats(this.sessionId).run();
+
+    this.chats = chats.chats.map((v) => ({
+      id: v.id,
+      name: v.name,
+      messages: [],
+    }));
   }
 })();
