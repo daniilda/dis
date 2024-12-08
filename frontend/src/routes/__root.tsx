@@ -3,7 +3,9 @@ import { Outlet, createRootRoute } from "@tanstack/react-router";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NotFoundLayout } from "@/components/layouts/not-found.layout";
 import { FullWindowFileUpload } from "@/components/full-screen-file-upload";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider, useTheme } from "@/components/theme-provider";
+import { Toaster } from "sonner";
+import { createPortal } from "react-dom";
 
 const ModalPresenter = React.lazy(() =>
   import("@/components/ui/modal/modal-presenter").then((m) => ({
@@ -11,10 +13,23 @@ const ModalPresenter = React.lazy(() =>
   })),
 );
 
+const ToastContainer = () => {
+  const theme = useTheme();
+  return (
+    <Toaster
+      richColors
+      position="bottom-left"
+      theme={theme.theme}
+      className="z-[9999]"
+    />
+  );
+};
+
 const Page = React.memo(() => {
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <TooltipProvider>
+        {createPortal(<ToastContainer />, document.body)}
         <FullWindowFileUpload />
         <Outlet />
         <React.Suspense>
