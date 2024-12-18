@@ -36,6 +36,7 @@ export const supportedFileExtensions: {
 export const vm = new (class {
   isLoading = false;
   chats: Chat[] = [];
+  database: DatabaseFile[] = [];
   selectedChat: Chat | null = null;
   get selectedFiles() {
     return this.database.filter((file) => file.selected);
@@ -56,7 +57,6 @@ export const vm = new (class {
       this.database = this.database.filter((file) => !file.selected);
     }
   }
-  database: DatabaseFile[] = [];
 
   async createChat(): Promise<Chat | null> {
     const res = await showModal(CreateChatModal, {});

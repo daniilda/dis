@@ -160,10 +160,10 @@ export const Sidebar = observer(({ isCollapsed, isMobile }: SidebarProps) => {
                 <ChatBubbleAvatar className="text-foreground">
                   <BookIcon />
                 </ChatBubbleAvatar>
-                <div className="flex flex-col max-w-28">
-                  <span>{chat.name}</span>
+                <div className="flex flex-col">
+                  <span className="truncate max-w-24">{chat.name}</span>
                   {chat.messages.length > 0 && (
-                    <span className="text-zinc-300 text-xs truncate">
+                    <span className="text-zinc-300 text-xs truncate max-w-28">
                       Бот:{" "}
                       {chat.messages[chat.messages.length - 1].isLoading
                         ? "Печатает..."

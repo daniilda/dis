@@ -1,4 +1,6 @@
+import io
 import os
+from xml.etree.ElementTree import tostring
 
 from PIL import Image
 from fastapi import FastAPI, UploadFile
@@ -15,12 +17,12 @@ vlm = PDFProcessor()
 qwen = QwenAnswerGenerator()
 
 @app.post("/index")
-async def index(file: bytes, id: str):
-    return vlm.load_pdf(qdrant_client, file, id)
+async def index(file: UploadFile, id: str):
+    return vlm.load_pdf(qdrant_client, await file.read(), id)
 
 @app.post("/query")
 async def query(query: str):
-    a = vlm.search_slide(qdrant_client, query)
+    a = await vlm.search_slide(qdrant_client, query)
     id = a['document_id']
     page = a['slide_id']
     with Image.open(f"/workspace/image_folder/{id}/page_{page}.png", "r") as i:
@@ -28,7 +30,11 @@ async def query(query: str):
     return {'response':res, 'document_id': id, 'page': page}
 
 
-@app.get("/page")    
+@app.get("/page")
 async def get_page(doc_id: str, page: int):
+    img_byte_arr = io.BytesIO()
     with Image.open(f"/workspace/image_folder/{doc_id}/page_{page}.png", "r") as i:
-        return i.tobytes()
+        i.save(img_byte_arr, format='PNG')
+        img_byte_arr = img_byte_arr.getvalue()
+        return img_byte_arr
+

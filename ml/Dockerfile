@@ -4,6 +4,9 @@ WORKDIR /code
 
 COPY ./requirements.txt /code/requirements.txt
 
+RUN apt-get update
+RUN apt install poppler-utils
+
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 RUN pip install "fastapi[standard]"

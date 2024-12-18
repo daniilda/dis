@@ -67,7 +67,7 @@ const ChatBubbleAvatar: React.FC<
   children ? (
     <div
       className={cn(
-        "size-10 p-2 rounded-full bg-secondary flex items-center justify-center *:size-full",
+        "size-10 min-w-10 p-2 rounded-full bg-secondary flex items-center justify-center *:size-full",
         className,
       )}
     >

@@ -31,7 +31,7 @@ public sealed class FileController(IFileStorage fileStorage, IDbContextFactory c
     [HttpGet("documents/pages/{documentId:guid}/{page:int}")]
     public async Task<IActionResult> GetDocumentPageFileById([FromRoute]Guid documentId, [FromRoute]int page, CancellationToken cancellationToken)
     {
-        var result = await _mlClient.GetFileAsync(documentId.ToString(), cancellationToken);
+        var result = await _mlClient.GetFileAsync(documentId.ToString(), page, cancellationToken);
         return File(result, "image/png", fileDownloadName: documentId.ToString() + ".png");
     }
 

@@ -112,21 +112,29 @@ public sealed class SessionController(IDbContextFactory contextFactory, IMlClien
 
     [HttpPost("{sessionId:guid}/chats/{chatId:guid}/response")]
     public async Task<CreateChatResponseResponse> CreateChatResponse(
-        CreateChatResponseRequest request,
+        [FromRoute] Guid sessionId,
+        [FromRoute] Guid chatId,
+        [FromBody] string query,
         CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        
+        await using var connection = _contextFactory.CreateConnection();
+        var q = await _mlClient.QueryAsync(query, cancellationToken);
+        var db = new UserQueryResponseDb
+        {
+            ChatId = chatId,
+            SessionId = sessionId,
+            CreatedAt = DateTime.UtcNow,
+            Query = query,
+            ResponseText = q.Text,
+            DocumentId = q.Document?.Id ?? Guid.NewGuid(),
+            PictureFileId = q.PictureFileId
+        };
+        await connection
+            .InsertAsync(db, token: cancellationToken);
+
         return new CreateChatResponseResponse
         {
-            Message = new ChatMessage
-            {
-                IsBot = true,
-                CreatedAt = default,
-                Text = "",
-                Document = null,
-                PictureFileId = null
-            }
+            Message = q
         };
     }
 

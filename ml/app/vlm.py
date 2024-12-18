@@ -44,6 +44,8 @@ class PDFProcessor:
         start_id_image = len(self.get_id_documents)
         id_document = len(self.documents)
         for idx, i in enumerate(images):
+            if not os.path.exists(f"/workspace/image_folder/{doc_id}"):
+                os.makedirs(f"/workspace/image_folder/{doc_id}")
             i.save(f"/workspace/image_folder/{doc_id}/page_{idx}.png", "PNG")
             self.get_id_documents.append((id_document, idx))
         self.documents.append(id_document)
@@ -140,7 +142,7 @@ pdf_processor = PDFProcessor(device="cuda", hf_token="hf_LeoeuqDZeLWHAqevccIPQfx
 from qdrant_client import QdrantClient
 
 qdrant_client = QdrantClient(
-    url="http://90.156.159.212:80"
+    url= os.getenv("QDRANT_ADDRESS", "http://90.156.159.212:80")
 )
 
 collection_name = "ufo-binary"

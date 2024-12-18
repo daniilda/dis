@@ -62,7 +62,7 @@ public sealed class DocumentController(IDbContextFactory contextFactory, IFileSt
 
     [HttpPost]
     [DisableRequestSizeLimit]
-    public async Task Upload([FromForm] IFormFileCollection collection, CancellationToken cancellationToken)
+    public async Task Upload(IFormFileCollection collection, CancellationToken cancellationToken)
     {
         await using var connection = _contextFactory.CreateConnection();
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
@@ -77,13 +77,13 @@ public sealed class DocumentController(IDbContextFactory contextFactory, IFileSt
                 }
             }
 
-            if (formFile.ContentType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-                await ResolveFiles(
-                    connection,
-                    formFile.OpenReadStream(),
-                    FileFormat.Docx,
-                    formFile.FileName,
-                    cancellationToken);
+            // if (formFile.ContentType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            //     await ResolveFiles(
+            //         connection,
+            //         formFile.OpenReadStream(),
+            //         FileFormat.Docx,
+            //         formFile.FileName,
+            //         cancellationToken);
 
             if (formFile.ContentType == "application/pdf")
                 await ResolveFiles(
@@ -93,13 +93,13 @@ public sealed class DocumentController(IDbContextFactory contextFactory, IFileSt
                     formFile.FileName,
                     cancellationToken);
 
-            if (formFile.ContentType == "image/png")
-                await ResolveFiles(
-                    connection,
-                    formFile.OpenReadStream(),
-                    FileFormat.Png,
-                    formFile.FileName,
-                    cancellationToken);
+            // if (formFile.ContentType == "image/png")
+            //     await ResolveFiles(
+            //         connection,
+            //         formFile.OpenReadStream(),
+            //         FileFormat.Png,
+            //         formFile.FileName,
+            //         cancellationToken);
         }
 
         await transaction.CommitAsync(cancellationToken);
@@ -148,10 +148,10 @@ public sealed class DocumentController(IDbContextFactory contextFactory, IFileSt
 
             if (zipArchiveEntry.Name.Contains(".pdf"))
                 yield return (zipArchiveEntry.Open(), FileFormat.Pdf, zipArchiveEntry.Name);
-            if (zipArchiveEntry.Name.Contains(".png"))
-                yield return (zipArchiveEntry.Open(), FileFormat.Png, zipArchiveEntry.Name);
-            if (zipArchiveEntry.Name.Contains(".docx"))
-                yield return (zipArchiveEntry.Open(), FileFormat.Docx, zipArchiveEntry.Name);
+            // if (zipArchiveEntry.Name.Contains(".png"))
+            //     yield return (zipArchiveEntry.Open(), FileFormat.Png, zipArchiveEntry.Name);
+            // if (zipArchiveEntry.Name.Contains(".docx"))
+            //     yield return (zipArchiveEntry.Open(), FileFormat.Docx, zipArchiveEntry.Name);
         }
     }
 }
